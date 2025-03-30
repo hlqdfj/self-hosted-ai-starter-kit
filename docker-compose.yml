@@ -33,8 +33,8 @@ x-ollama: &service-ollama
 
 x-init-ollama: &init-ollama
   image: ollama/ollama:latest
-  networks: ['demo']
   container_name: ollama-pull-llama
+  networks: ['demo']
   volumes:
     - ollama_storage:/root/.ollama
   entrypoint: /bin/sh
@@ -42,7 +42,8 @@ x-init-ollama: &init-ollama
     - OLLAMA_HOST=ollama:11434
   command:
     - "-c"
-    - "sleep 3; ollama pull llama3.2"
+    - "sleep 3; ollama pull llama3 && ollama pull llama2 && ollama pull mistral && ollama pull nomic-embed-text"
+
 
 services:
   postgres:
@@ -50,6 +51,8 @@ services:
     hostname: postgres
     networks: ['demo']
     restart: unless-stopped
+    ports:
+      - 5432:5432
     environment:
       - POSTGRES_USER
       - POSTGRES_PASSWORD
